@@ -8,7 +8,8 @@ import '../../models/medicine.dart';
 /// 药品详情页（说明书）- 增强版
 /// 使用MedicineProvider获取真实数据，支持说明书折叠展开
 class MedicineDetailPage extends StatefulWidget {
-  const MedicineDetailPage({super.key});
+  final String? medicineName;
+  const MedicineDetailPage({super.key, this.medicineName});
 
   @override
   State<MedicineDetailPage> createState() => _MedicineDetailPageState();

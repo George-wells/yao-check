@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../core/theme/theme_provider.dart';
-import '../../core/constants/app_constants.dart';
-import '../../services/local_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../core/constants/app_constants.dart';
 
 /// 引导页
-/// 首次启动时展示3页引导内容
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
@@ -14,74 +11,60 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final PageController _pageController = PageController();
+  final PageController _controller = PageController();
   int _currentPage = 0;
 
   final List<_OnboardingItem> _items = [
     _OnboardingItem(
-      icon: Icons.alarm_on_outlined,
-      title: '智能用药管理',
-      subtitle: '设置个性化用药提醒\n不再漏服、错服任何一次药',
+      icon: Icons.medication_outlined,
+      title: '用药提醒',
+      description: '设置个性化用药提醒，按时服药不遗漏',
       color: const Color(0xFF1890FF),
     ),
     _OnboardingItem(
-      icon: Icons.family_restroom_outlined,
-      title: '家人远程监护',
-      subtitle: '实时了解家人用药情况\n漏服自动通知，安心放心',
-      color: const Color(0xFFFF6B35),
+      icon: Icons.search_outlined,
+      title: '药物查询',
+      description: '查询药物信息，了解用法用量和注意事项',
+      color: const Color(0xFF52C41A),
     ),
     _OnboardingItem(
-      icon: Icons.medication_outlined,
-      title: '药品信息查询',
-      subtitle: '扫码查药、相互作用检查\n安全用药，科学管理',
-      color: const Color(0xFF52C41A),
+      icon: Icons.assignment_outlined,
+      title: '处方管理',
+      description: '拍照识别处方，一键添加用药提醒',
+      color: const Color(0xFFFAAD14),
+    ),
+    _OnboardingItem(
+      icon: Icons.security_outlined,
+      title: '本地隐私',
+      description: '所有数据仅存储在本地，不上传云端',
+      color: const Color(0xFF722ED1),
     ),
   ];
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
-  Future<void> _onGetStarted() async {
-    final storage = LocalStorageService.instance;
-    await storage.setBool('onboarding_done', true);
+  Future<void> _completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(AppConstants.onboardingDoneKey, true);
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, AppConstants.routeLogin);
+    Navigator.pushReplacementNamed(context, AppConstants.routeHome);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.watch<ThemeProvider>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // 跳过按钮
-            Align(
-              alignment: Alignment.topRight,
-              child: TextButton(
-                onPressed: _onGetStarted,
-                child: Text(
-                  '跳过',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: theme.textSecondary,
-                  ),
-                ),
-              ),
-            ),
-
-            // 引导内容
             Expanded(
               child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentPage = index);
-                },
+                controller: _controller,
+                onPageChanged: (index) => setState(() => _currentPage = index),
                 itemCount: _items.length,
                 itemBuilder: (context, index) {
                   final item = _items[index];
@@ -90,37 +73,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // 图标
                         Container(
                           width: 120,
                           height: 120,
                           decoration: BoxDecoration(
                             color: item.color.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius: BorderRadius.circular(60),
                           ),
-                          child: Icon(
-                            item.icon,
-                            size: 64,
-                            color: item.color,
-                          ),
+                          child: Icon(item.icon, size: 60, color: item.color),
                         ),
                         const SizedBox(height: 40),
                         Text(
                           item.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF262626),
+                            color: item.color,
                           ),
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          item.subtitle,
+                          item.description,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Color(0xFF595959),
-                            height: 1.6,
+                            height: 1.5,
                           ),
                         ),
                       ],
@@ -129,67 +107,54 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 },
               ),
             ),
-
-            // 指示器 + 按钮
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                children: [
-                  // 圆点指示器
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _items.length,
-                      (index) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: _currentPage == index ? 24 : 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: _currentPage == index
-                              ? theme.primary
-                              : theme.primary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
+            // 指示器
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _items.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPage == index ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? _items[_currentPage].color
+                        : const Color(0xFFD9D9D9),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  const SizedBox(height: 32),
-
-                  // 按钮
-                  SizedBox(
-                    width: double.infinity,
-                    height: theme.buttonHeight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_currentPage < _items.length - 1) {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        } else {
-                          _onGetStarted();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(theme.buttonRadius),
-                        ),
-                      ),
-                      child: Text(
-                        _currentPage < _items.length - 1 ? '下一步' : '立即体验',
-                        style: TextStyle(
-                          fontSize: theme.fontSizeButton,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
+            const SizedBox(height: 32),
+            // 按钮
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _currentPage == _items.length - 1
+                      ? _completeOnboarding
+                      : () => _controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _items[_currentPage].color,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                  ),
+                  child: Text(
+                    _currentPage == _items.length - 1 ? '开始使用' : '下一步',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -200,13 +165,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
 class _OnboardingItem {
   final IconData icon;
   final String title;
-  final String subtitle;
+  final String description;
   final Color color;
 
-  _OnboardingItem({
+  const _OnboardingItem({
     required this.icon,
     required this.title,
-    required this.subtitle,
+    required this.description,
     required this.color,
   });
 }

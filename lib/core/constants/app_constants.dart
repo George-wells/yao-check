@@ -6,17 +6,9 @@ class AppConstants {
   static const String appName = '智能用药';
   static const String appVersion = '1.0.0';
 
-  // ==================== API ====================
-  static const String baseUrl = 'http://localhost:3000/api';
-  static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 15);
-  static const Duration sendTimeout = Duration(seconds: 15);
-
   // ==================== 存储Key ====================
-  static const String tokenKey = 'access_token';
-  static const String refreshTokenKey = 'refresh_token';
   static const String themeModeKey = 'theme_mode';
-  static const String userProfileKey = 'user_profile';
+  static const String onboardingDoneKey = 'onboarding_done';
 
   // ==================== 提醒相关 ====================
   static const int missedDoseThresholdMinutes = 30;
@@ -43,7 +35,6 @@ class AppConstants {
   // ==================== 路由路径 ====================
   static const String routeSplash = '/';
   static const String routeOnboarding = '/onboarding';
-  static const String routeLogin = '/login';
   static const String routeHome = '/home';
   static const String routeReminders = '/reminders';
   static const String routeReminderAdd = '/reminders/add';
@@ -56,8 +47,5 @@ class AppConstants {
   static const String routePrescriptions = '/prescriptions';
   static const String routePrescriptionOcr = '/prescriptions/ocr';
   static const String routePrescriptionDetail = '/prescriptions/detail';
-  static const String routeFamily = '/family';
-  static const String routeFamilyDetail = '/family/detail';
   static const String routeSettings = '/settings';
-  static const String routeProfile = '/profile';
 }
