@@ -35,7 +35,7 @@ class SmartMedicationApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.watch<ThemeProvider>();
     return MaterialApp(
-      title: '智能用药',
+      title: '药吃了么',
       debugShowCheckedModeBanner: false,
       theme: theme.buildLightTheme(),
       darkTheme: theme.buildDarkTheme(),

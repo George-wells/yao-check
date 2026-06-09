@@ -3,7 +3,7 @@ class AppConstants {
   AppConstants._();
 
   // ==================== 应用信息 ====================
-  static const String appName = '智能用药';
+  static const String appName = '药吃了么';
   static const String appVersion = '1.0.0';
 
   // ==================== 存储Key ====================
