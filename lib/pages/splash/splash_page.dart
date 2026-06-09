@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../core/constants/app_constants.dart';
-import '../core/router/app_router.dart';
+import '../../core/constants/app_constants.dart';
+import '../../core/router/app_router.dart';
 
 /// 启动页
 class SplashPage extends StatefulWidget {

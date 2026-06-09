@@ -133,23 +133,17 @@ class _HomePageState extends State<HomePage> {
       children: [
         Expanded(
           child: ProgressCard(
-            title: '用药计划',
-            value: '$total',
-            unit: '个',
-            icon: Icons.medication_outlined,
-            color: theme.primary,
-            isElderly: isElderly,
+            completed: 0,
+            total: total,
+            progress: 0,
           ),
         ),
         SizedBox(width: theme.spaceMD),
         Expanded(
           child: ProgressCard(
-            title: '待服药',
-            value: '$active',
-            unit: '项',
-            icon: Icons.schedule,
-            color: const Color(0xFFFA8C16),
-            isElderly: isElderly,
+            completed: 0,
+            total: active,
+            progress: 0,
           ),
         ),
       ],
@@ -263,7 +257,7 @@ class _HomePageState extends State<HomePage> {
           }, isElderly),
           SizedBox(height: theme.spaceMD),
           _buildMenuCard(theme, Icons.palette_outlined, '适老化模式', () {
-            theme.toggleElderlyMode();
+            theme.toggleMode();
           }, isElderly),
         ],
       ),

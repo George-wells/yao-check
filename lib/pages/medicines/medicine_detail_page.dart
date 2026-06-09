@@ -28,11 +28,8 @@ class _MedicineDetailPageState extends State<MedicineDetailPage> {
 
   void _loadData() {
     final medicine = context.read<MedicineProvider>();
-    if (medicine.selectedMedicine == null) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      if (args != null && args.containsKey('keyword')) {
-        medicine.getMedicineByName(args['keyword']);
-      }
+    if (medicine.selectedMedicine == null && widget.medicineName != null && widget.medicineName!.isNotEmpty) {
+      medicine.getMedicineByName(widget.medicineName!);
     }
   }
 

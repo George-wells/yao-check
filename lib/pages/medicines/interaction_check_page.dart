@@ -176,7 +176,37 @@ class _InteractionCheckPageState extends State<InteractionCheckPage> {
 
             // 检查结果
             if (_showResult && medicine.interactionResult != null)
-              _buildResults(theme, medicine.interactionResult!, isElderly),
+              _buildResultsText(theme, medicine.interactionResult!, isElderly),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultsText(ThemeProvider theme, String result, bool isElderly) {
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(theme.cardPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'AI 分析结果',
+              style: TextStyle(
+                fontSize: theme.fontSizeH3,
+                fontWeight: FontWeight.bold,
+                color: theme.textPrimary,
+              ),
+            ),
+            SizedBox(height: theme.spaceMD),
+            Text(
+              result,
+              style: TextStyle(
+                fontSize: isElderly ? 16 : 14,
+                color: theme.textPrimary,
+                height: 1.6,
+              ),
+            ),
           ],
         ),
       ),

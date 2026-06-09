@@ -37,9 +37,7 @@ class SmartMedicationApp extends StatelessWidget {
     return MaterialApp(
       title: '药吃了么',
       debugShowCheckedModeBanner: false,
-      theme: theme.buildLightTheme(),
-      darkTheme: theme.buildDarkTheme(),
-      themeMode: theme.themeMode,
+      theme: theme.toThemeData(),
       initialRoute: AppConstants.routeSplash,
       onGenerateRoute: AppRouter.generateRoute,
       navigatorKey: AppRouter.navigatorKey,

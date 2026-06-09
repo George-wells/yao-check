@@ -13,6 +13,17 @@ class PrescriptionProvider extends ChangeNotifier {
   Prescription? get selectedPrescription => _selectedPrescription;
   bool get isLoading => _isLoading;
 
+  /// 即将过期的处方（7天内）
+  List<Prescription> get expiringPrescriptions {
+    final now = DateTime.now();
+    final sevenDaysLater = now.add(const Duration(days: 7));
+    return _prescriptions.where((p) {
+      if (p.expiryDate == null) return false;
+      final expiry = DateTime.tryParse(p.expiryDate!);
+      return expiry != null && expiry.isAfter(now) && expiry.isBefore(sevenDaysLater);
+    }).toList();
+  }
+
   Box get _box => Hive.box('medication_data');
 
   PrescriptionProvider() {
@@ -41,6 +52,23 @@ class PrescriptionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> createPrescription(Map<String, dynamic> data) async {
+    final prescription = Prescription(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      userId: 'local',
+      hospitalName: data['hospitalName'],
+      doctorName: data['doctorName'],
+      diagnosis: data['diagnosis'],
+      issueDate: data['issueDate'],
+      expiryDate: data['expiryDate'],
+      status: 'active',
+    );
+    _prescriptions.add(prescription);
+    _savePrescriptions();
+    notifyListeners();
+    return true;
+  }
+
   Future<void> updatePrescription(Prescription prescription) async {
     final index = _prescriptions.indexWhere((p) => p.id == prescription.id);
     if (index >= 0) {
@@ -53,6 +81,14 @@ class PrescriptionProvider extends ChangeNotifier {
   Future<void> deletePrescription(String id) async {
     _prescriptions.removeWhere((p) => p.id == id);
     _savePrescriptions();
+    notifyListeners();
+  }
+
+  Future<void> getPrescriptionDetail(String id) async {
+    _isLoading = true;
+    notifyListeners();
+    _selectedPrescription = _prescriptions.where((p) => p.id == id).firstOrNull;
+    _isLoading = false;
     notifyListeners();
   }
 

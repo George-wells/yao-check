@@ -128,13 +128,6 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 深色模式
-            SwitchListTile(
-              title: Text('深色模式', style: TextStyle(fontSize: isElderly ? 18 : 16)),
-              value: theme.themeMode == ThemeMode.dark,
-              onChanged: (v) => theme.toggleDarkMode(),
-              contentPadding: EdgeInsets.zero,
-            ),
             // 适老化模式
             SwitchListTile(
               title: Text('适老化模式', style: TextStyle(fontSize: isElderly ? 18 : 16)),
@@ -143,7 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 style: TextStyle(fontSize: isElderly ? 14 : 12, color: theme.textSecondary),
               ),
               value: theme.isElderlyMode,
-              onChanged: (v) => theme.toggleElderlyMode(),
+              onChanged: (v) => theme.toggleMode(),
               contentPadding: EdgeInsets.zero,
             ),
           ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../core/constants/app_constants.dart';
+import '../../core/constants/app_constants.dart';
 
 /// 引导页
 class OnboardingPage extends StatefulWidget {
