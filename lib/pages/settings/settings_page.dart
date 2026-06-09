@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/constants/app_constants.dart';
-import '../../services/deepseek_service.dart';
+import '../../services/volcengine_service.dart';
 
-/// 设置页面 - 包含DeepSeek AI配置
+/// 设置页面 - 包含火山引擎 AI配置
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -14,7 +14,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final _apiKeyController = TextEditingController();
-  String _currentModel = 'deepseek-chat';
+  String _currentModel = 'doubao-1.5-pro-256k';
   bool _isLoading = true;
 
   @override
@@ -30,8 +30,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _loadSettings() async {
-    final apiKey = await DeepSeekService.getApiKey();
-    final model = await DeepSeekService.getModel();
+    final apiKey = await VolcengineService.getApiKey();
+    final model = await VolcengineService.getModel();
     if (mounted) {
       setState(() {
         _apiKeyController.text = apiKey ?? '';
@@ -42,7 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _saveApiKey() async {
-    await DeepSeekService.setApiKey(_apiKeyController.text.trim());
+    await VolcengineService.setApiKey(_apiKeyController.text.trim());
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('API Key 已保存'), backgroundColor: Colors.green),
@@ -58,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     setState(() => _isLoading = true);
-    final result = await DeepSeekService.askQuestion('你好，请回复"连接成功"');
+    final result = await VolcengineService.askQuestion('你好，请回复"连接成功"');
     setState(() => _isLoading = false);
 
     if (!mounted) return;
@@ -154,7 +154,7 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             // API Key
             Text(
-              'DeepSeek API Key',
+              '火山引擎 API Key',
               style: TextStyle(
                 fontSize: isElderly ? 18 : 16,
                 fontWeight: FontWeight.w500,
@@ -166,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
               controller: _apiKeyController,
               obscureText: true,
               decoration: InputDecoration(
-                hintText: '输入你的 DeepSeek API Key',
+                hintText: '输入你的 火山引擎 API Key',
                 hintStyle: TextStyle(color: theme.textDisabled),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(theme.radiusMD),
@@ -203,13 +203,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               style: TextStyle(fontSize: isElderly ? 18 : 14),
               items: const [
-                DropdownMenuItem(value: 'deepseek-chat', child: Text('DeepSeek Chat')),
-                DropdownMenuItem(value: 'deepseek-reasoner', child: Text('DeepSeek Reasoner')),
+                DropdownMenuItem(value: 'doubao-1.5-pro-256k', child: Text('火山引擎 Chat')),
+                DropdownMenuItem(value: 'doubao-1.5-lite-32k', child: Text('火山引擎 Reasoner')),
               ],
               onChanged: (v) {
                 if (v != null) {
                   setState(() => _currentModel = v);
-                  DeepSeekService.setModel(v);
+                  VolcengineService.setModel(v);
                 }
               },
             ),
@@ -253,7 +253,7 @@ class _SettingsPageState extends State<SettingsPage> {
             _buildInfoRow(theme, '数据存储', '仅本地（不上传云端）', isElderly),
             const SizedBox(height: 16),
             Text(
-              '本应用所有数据仅存储在您的设备上，不会上传到任何服务器。AI查询功能通过您自行配置的 API Key 调用 DeepSeek 官方接口。',
+              '本应用所有数据仅存储在您的设备上，不会上传到任何服务器。AI查询功能通过您自行配置的 API Key 调用 火山引擎 官方接口。',
               style: TextStyle(
                 fontSize: isElderly ? 14 : 12,
                 color: theme.textSecondary,

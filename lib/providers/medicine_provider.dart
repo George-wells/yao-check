@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:convert';
 import '../models/medicine.dart';
-import '../services/deepseek_service.dart';
+import '../services/volcengine_service.dart';
 
-/// 药品信息Provider - 本地存储 + DeepSeek AI 查询
+/// 药品信息Provider - 本地存储 + 火山引擎 AI 查询
 class MedicineProvider extends ChangeNotifier {
   List<Medicine> _medicines = [];
   List<Medicine> _searchResults = [];
@@ -118,7 +118,7 @@ class MedicineProvider extends ChangeNotifier {
 
     if (_selectedMedicine == null) {
       // 本地没有，用 AI 查询
-      final result = await DeepSeekService.queryMedicine(name);
+      final result = await VolcengineService.queryMedicine(name);
       _selectedMedicine = Medicine(
         id: name,
         name: name,
@@ -147,7 +147,7 @@ class MedicineProvider extends ChangeNotifier {
       return med?.name ?? id;
     }).toList();
 
-    _interactionResult = await DeepSeekService.checkInteraction(names);
+    _interactionResult = await VolcengineService.checkInteraction(names);
     _isLoading = false;
     notifyListeners();
   }
